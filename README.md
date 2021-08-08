@@ -24,8 +24,26 @@ conda install poetry
 conda install -c schrodinger -c conda-forge pymol-bundle
 ```
 
-4. Install dependencies
+4. Install the benchmark
 
 ```shell
-poetry install
+git clone https://github.com/wells-wood-research/sequence-recovery-benchmark.git
+```
+
+```shell
+cd sequence-recovery-benchmark
+```
+
+
+```shell
+git checkout command-line-tools
+```
+
+
+```shell
+poetry run pip install -r requirements.txt
+```
+
+```shell
+poetry run pip install .
 ```
