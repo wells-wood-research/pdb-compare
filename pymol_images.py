@@ -11,10 +11,10 @@ import matplotlib.pyplot as plt
 plt.style.use("ggplot")
 plt.rcParams["figure.figsize"] = (10, 10)
 
-model_name = "skilled-wind-134-timed_hs1000_l2_dp03_weighted"
+model_name = "skilled-wind-134-timed_hs1000_l2_dp03_weighted copy"
 # For loop does not work - ffs pymol
-pdb_structures = ["2v3i", "1hxr", "1g3p"]
-pdb_name = pdb_structures[2]
+pdb_structures = ["2v3i", "3e3v", "1g3p"]
+pdb_name = pdb_structures[0]
 original = f"{pdb_name}.pdb.gz"
 predicted = f"af2/{model_name}/{pdb_name}A_unrelaxed_model_1.pdb"
 pymol.pymol_argv = ['pymol', '-qc']
@@ -35,6 +35,7 @@ cmd.select(name="h2o", selection="solvent")
 cmd.hide(selection="h2o")
 # Hide 3D shadows
 cmd.set("ray_shadows", value="off")
+cmd.reset()
 # Export HD
 cmd.ray(2400, 2400)
 cmd.png(f"af2/{model_name}_{pdb_name}.png", width=2400, height=2400, dpi=300, ray=1)

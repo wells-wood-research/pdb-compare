@@ -9,7 +9,7 @@ import matplotlib as mpl
 mpl.rc("savefig", dpi=300)
 import matplotlib.pyplot as plt
 plt.style.use("ggplot")
-plt.rcParams["figure.figsize"] = (10, 10)
+plt.rcParams["figure.figsize"] = (7, 7)
 
 pymol.pymol_argv = ['pymol', '-qc']
 pymol.finish_launching()
@@ -80,7 +80,7 @@ def fetch_pdb(
     urllib.request.urlretrieve(pdb_request_url + pdb_code_with_extension,
                                filename=output_folder / pdb_code_with_extension)
 
-model_name = "skilled-wind-134-timed_hs1000_l2_dp03_weighted"
+model_name = "dashing-water-52-weighted_p1"
 df = pd.read_csv(f"performance/{model_name}_performance.csv")
 codes = df.PDB.values + df.chain.values
 rmsd_scores = []
@@ -127,12 +127,12 @@ plt.text(0.5*0.9, 2.2, '2 ($\AA$)', fontsize=18)
 plt.savefig(f"{model_name}_accuracy.eps")
 plt.close()
 
-plt.scatter(df.recall, df.rmsd, alpha=0.8, color="yellowgreen")
+plt.scatter(df.recall*100, df.rmsd, alpha=0.8, color="yellowgreen")
 plt.ylabel('RMSD ($\AA$)',  fontsize=20)
 plt.xlabel('Macro-Recall (%)',  fontsize=20)
 plt.axhline(2, color='k', linestyle='dashed', linewidth=1)
-plt.text(0.5*0.9, 2.2,'2 ($\AA$)', fontsize=18)
-plt.xlim(xmin=0, xmax=0.55)
+plt.text(50*0.9, 2.2,'2 ($\AA$)', fontsize=18)
+plt.xlim(xmin=0, xmax=55)
 plt.ylim(ymin=0, ymax=45)
 plt.xticks(fontsize=18)
 plt.yticks(fontsize=18)
@@ -144,6 +144,8 @@ plt.ylabel('Number of structures',  fontsize=20)
 plt.xlabel('RMSD ($\AA$)',  fontsize=20)
 plt.xticks(fontsize=18)
 plt.yticks(fontsize=18)
-plt.xlim(xmin=0)
+plt.xlim(xmin=0, xmax=45)
+plt.ylim(ymin=0, ymax=35)
+
 
 plt.savefig(f'{model_name}_hist.eps')

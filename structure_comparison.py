@@ -16,7 +16,7 @@ model_name2 = "default"
 
 # For loop does not work - ffs pymol
 pdb_structures = ["4wp6", "1uzk", "5b1r"]
-pdb_name = pdb_structures[0]
+pdb_name = pdb_structures[2]
 original = f"{pdb_name}.pdb.gz"
 # TODO requires different names
 predicted = f"af2/{model_name}/{pdb_name}A_unrelaxed_model_1_2.pdb"
