@@ -31,7 +31,7 @@ cmd.load(predicted2)
 print(cmd.get_object_list('all'))
 sel1, sel2, sel3 = cmd.get_object_list('all')
 # Color white (original) cyan (prediction)
-cmd.color("white", sel1)
+cmd.color("magenta", sel1)
 cmd.color("cyan", sel2)
 cmd.color("yellow", sel3)
 # Align structures
