@@ -80,7 +80,7 @@ def fetch_pdb(
     urllib.request.urlretrieve(pdb_request_url + pdb_code_with_extension,
                                filename=output_folder / pdb_code_with_extension)
 
-model_name = "dashing-water-52-weighted_p1"
+model_name = "rosetta"
 df = pd.read_csv(f"performance/{model_name}_performance.csv")
 codes = df.PDB.values + df.chain.values
 rmsd_scores = []
