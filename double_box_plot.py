@@ -128,9 +128,9 @@ fig, (ax, ax2 )= plt.subplots(nrows=2)
 
 models = [
     "rosetta",
-    "gx[pc]-distance-12-l10",
-    "default",
-
+    # "gx[pc]-distance-12-l10",
+    # "default",
+    "default_unbalanced",
 ]
 colors = ["#FFC20A", "#0C7BDC",  "#cc79a7",  "#4b4346"]
 # colors = [  "#cc79a7",  "#4b4346"]
