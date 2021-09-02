@@ -80,133 +80,133 @@ def fetch_pdb(
     urllib.request.urlretrieve(pdb_request_url + pdb_code_with_extension,
                                filename=output_folder / pdb_code_with_extension)
 
-model_name = "default_unbalanced"
+model_name = "evoEF2"
 df = pd.read_csv(f"performance/{model_name}_performance.csv")
 codes = df.PDB.values + df.chain.values
 rmsd_scores = []
 gdt_scores = []
 
-codes = ["1h70A",
-"1a41A",
-"1ds1A",
-"1dvoA",
-"1g3pA",
-"1hq0A",
-"1hxrA",
-"1jovA",
-"1l0sA",
-"1o7iA",
-"1uzkA",
-"1x8qA",
-"2bhuA",
-"2dyiA",
-"2imhA",
-"2j8kA",
-"2of3A",
-"2ra1A",
-"2v3gA",
-"2v3iA",
-"2w18A",
-"3cxbA",
-"3dadA",
-"3dkrA",
-"3e3vA",
-"3e4gA",
-"3e8tA",
-"3essA",
-"3giaA",
-"3gohA",
-"3hvmA",
-"3klkA",
-"3kluA",
-"3kstA",
-"3kyfA",
-"3maoA",
-"3o4pA",
-"3oajA",
-"3q1nA",
-"3rf0A",
-"3swgA",
-"3zbdA",
-"3zh4A",
-"4a6qA",
-"4ecoA",
-"4efpA",
-"4fcgA",
-"4fs7A",
-"4i1kA",
-"4le7A",
-"4m4dA",
-"4ozwA",
-"4wp6A",
-"4y5jA",
-"5b1rA",
-"5bufA",
-"5c12A",
-"5dicA",
-"6baqA"]
+# codes = ["1h70A",
+# "1a41A",
+# "1ds1A",
+# "1dvoA",
+# "1g3pA",
+# "1hq0A",
+# "1hxrA",
+# "1jovA",
+# "1l0sA",
+# "1o7iA",
+# "1uzkA",
+# "1x8qA",
+# "2bhuA",
+# "2dyiA",
+# "2imhA",
+# "2j8kA",
+# "2of3A",
+# "2ra1A",
+# "2v3gA",
+# "2v3iA",
+# "2w18A",
+# "3cxbA",
+# "3dadA",
+# "3dkrA",
+# "3e3vA",
+# "3e4gA",
+# "3e8tA",
+# "3essA",
+# "3giaA",
+# "3gohA",
+# "3hvmA",
+# "3klkA",
+# "3kluA",
+# "3kstA",
+# "3kyfA",
+# "3maoA",
+# "3o4pA",
+# "3oajA",
+# "3q1nA",
+# "3rf0A",
+# "3swgA",
+# "3zbdA",
+# "3zh4A",
+# "4a6qA",
+# "4ecoA",
+# "4efpA",
+# "4fcgA",
+# "4fs7A",
+# "4i1kA",
+# "4le7A",
+# "4m4dA",
+# "4ozwA",
+# "4wp6A",
+# "4y5jA",
+# "5b1rA",
+# "5bufA",
+# "5c12A",
+# "5dicA",
+# "6baqA"]
+
+# for x in codes:
+#     if Path(f"{x}.pdb.gz").exists():
+#         continue
+#     else:
+#         fetch_pdb(x[:-1],Path(''))
+#
+#check all files exist
+pdb_paths = []
+for x in codes:
+    if not Path(f"af2/{model_name}/{x}_unrelaxed_model_1.pdb").exists():
+        print(x)
+
 
 for x in codes:
-    if Path(f"{x}.pdb.gz").exists():
-        continue
-    else:
-        fetch_pdb(x[:-1],Path(''))
-#
-# #check all files exist
-# pdb_paths = []
-# for x in codes:
-#     if not Path(f"af2/{model_name}/{x}_unrelaxed_model_1.pdb").exists():
-#         print(x)
-#
-#
-# for x in codes:
-#     try:
-#         g,r = gdt(f"{x[:-1]}.pdb.gz", f"af2/{model_name}/{x}_unrelaxed_model_1.pdb")
-#         rmsd_scores.append(r)
-#         gdt_scores.append(g)
-#     except Exception as e:
-#         print(e)
-#         rmsd_scores.append(np.nan)
-#         gdt_scores.append(np.nan)
-#
-# df['rmsd']=rmsd_scores
-# df['gdt']=gdt_scores
-# df.to_csv(f'results_{model_name}.csv')
-#
-# import matplotlib.pyplot as plt
-#
-#
-# df.dropna()
-# plt.scatter(df.accuracy, df.rmsd, alpha=0.8)
-# plt.axhline(2, color='k', linestyle='dashed', linewidth=1)
-# plt.xlim(xmin=0, xmax=0.55)
-# plt.ylim(ymin=0, ymax=45)
-# plt.ylabel('RMSD ($\AA$)',  fontsize=20)
-# plt.xlabel('Accuracy (%)',  fontsize=20)
-# plt.text(0.5*0.9, 2.2, '2 ($\AA$)', fontsize=18)
-#
-# plt.savefig(f"{model_name}_accuracy.eps")
-# plt.close()
-#
-# plt.scatter(df.recall*100, df.rmsd, alpha=0.8, color="yellowgreen")
-# plt.ylabel('RMSD ($\AA$)',  fontsize=20)
-# plt.xlabel('Macro-Recall (%)',  fontsize=20)
-# plt.axhline(2, color='k', linestyle='dashed', linewidth=1)
-# plt.text(50*0.9, 2.2,'2 ($\AA$)', fontsize=18)
-# plt.xlim(xmin=0, xmax=55)
-# plt.ylim(ymin=0, ymax=45)
-# plt.xticks(fontsize=18)
-# plt.yticks(fontsize=18)
-# plt.savefig(f"{model_name}_recall.eps")
-# plt.close()
-#
-# df.rmsd.hist(bins=20, color="blueviolet",)
-# plt.ylabel('Number of structures',  fontsize=20)
-# plt.xlabel('RMSD ($\AA$)',  fontsize=20)
-# plt.xticks(fontsize=18)
-# plt.yticks(fontsize=18)
-# plt.xlim(xmin=0, xmax=45)
-# plt.ylim(ymin=0, ymax=35)
-#
-#
-# plt.savefig(f'{model_name}_hist.eps')
+    try:
+        g,r = gdt(f"structures/{x[:-1]}.pdb.gz", f"af2/{model_name}/{x}_unrelaxed_model_1.pdb")
+        rmsd_scores.append(r)
+        gdt_scores.append(g)
+    except Exception as e:
+        print(e)
+        rmsd_scores.append(np.nan)
+        gdt_scores.append(np.nan)
+
+df['rmsd']=rmsd_scores
+df['gdt']=gdt_scores
+df.to_csv(f'results_{model_name}.csv')
+
+import matplotlib.pyplot as plt
+
+
+df.dropna()
+plt.scatter(df.accuracy, df.rmsd, alpha=0.8)
+plt.axhline(2, color='k', linestyle='dashed', linewidth=1)
+plt.xlim(xmin=0, xmax=0.55)
+plt.ylim(ymin=0, ymax=45)
+plt.ylabel('RMSD ($\AA$)',  fontsize=20)
+plt.xlabel('Accuracy (%)',  fontsize=20)
+plt.text(0.5*0.9, 2.2, '2 ($\AA$)', fontsize=18)
+
+plt.savefig(f"{model_name}_accuracy.eps")
+plt.close()
+
+plt.scatter(df.recall*100, df.rmsd, alpha=0.8, color="yellowgreen")
+plt.ylabel('RMSD ($\AA$)',  fontsize=20)
+plt.xlabel('Macro-Recall (%)',  fontsize=20)
+plt.axhline(2, color='k', linestyle='dashed', linewidth=1)
+plt.text(50*0.9, 2.2,'2 ($\AA$)', fontsize=18)
+plt.xlim(xmin=0, xmax=55)
+plt.ylim(ymin=0, ymax=45)
+plt.xticks(fontsize=18)
+plt.yticks(fontsize=18)
+plt.savefig(f"{model_name}_recall.eps")
+plt.close()
+
+df.rmsd.hist(bins=20, color="blueviolet",)
+plt.ylabel('Number of structures',  fontsize=20)
+plt.xlabel('RMSD ($\AA$)',  fontsize=20)
+plt.xticks(fontsize=18)
+plt.yticks(fontsize=18)
+plt.xlim(xmin=0, xmax=45)
+plt.ylim(ymin=0, ymax=35)
+
+
+plt.savefig(f'{model_name}_hist.eps')
