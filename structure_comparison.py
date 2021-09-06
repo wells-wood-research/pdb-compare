@@ -11,13 +11,13 @@ import matplotlib.pyplot as plt
 plt.style.use("ggplot")
 plt.rcParams["figure.figsize"] = (10, 10)
 
-model_name = "skilled-wind-134-timed_hs1000_l2_dp03_weighted"
+model_name = "default_unbalanced"
 model_name2 = "default"
 
 # For loop does not work - ffs pymol
-pdb_structures = ["4wp6", "1uzk", "5b1r"]
-pdb_name = pdb_structures[2]
-original = f"{pdb_name}.pdb.gz"
+pdb_structures = ["2ra1", "1l0s"]
+pdb_name = pdb_structures[0]
+original = f"structures/{pdb_name}.pdb.gz"
 # TODO requires different names
 predicted = f"af2/{model_name}/{pdb_name}A_unrelaxed_model_1_2.pdb"
 predicted2 = f"af2/{model_name2}/{pdb_name}A_unrelaxed_model_1.pdb"
@@ -45,4 +45,6 @@ cmd.set("ray_shadows", value="off")
 cmd.reset()
 # Export HD
 # cmd.ray(2400, 2400)
+print(0) # Somehow it doesn't always work without this...
 cmd.png(f"af2/{model_name}_{model_name2}_{pdb_name}.png", width=2400, height=2400, dpi=300, ray=1)
+cmd.save(f"af2/{model_name}_{model_name2}_{pdb_name}.pse")
