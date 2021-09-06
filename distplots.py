@@ -1,6 +1,7 @@
 import matplotlib as mpl
 
 mpl.rc("savefig", dpi=300)
+
 nice_fonts = {
     # "text.usetex": True,
     "font.family": "serif",
@@ -8,6 +9,7 @@ nice_fonts = {
 }
 mpl.rcParams.update(nice_fonts)
 import matplotlib.pyplot as plt
+# plt.rc('legend',fontsize=20) # using a size in points
 
 plt.style.use("ggplot")
 
@@ -60,26 +62,29 @@ def set_size(width, fraction=1):
 #     "default_unbalanced",
 #     "densecpd"
 # ]
-RMSD_100 = True
-# models = [
-#     "evoEF2",
-#     "prodconn",
-#     # "prodconn_unbalanced",
-#     "default",
-#     "default_unbalanced",
-#     "gx[pc]-distance-12-l10",
-#     "rosetta",
-#     "densecpd",
-#
-# ]
+
 models = [
     "evoEF2",
     "prodconn",
+    # "prodconn_unbalanced",
     "default",
     "default_unbalanced",
     "gx[pc]-distance-12-l10",
     "rosetta",
     "densecpd",
+
+]
+
+models_better_names = [
+    "EvoEF2",
+    "ProDCoNN",
+    # "prodconn_unbalanced",
+    "TIMED",
+    "TIMED-Unbalanced",
+    "GX[PC]",
+    "Rosetta",
+    "DenseCPD",
+
 ]
 class_names = ["Mainly Alpha", "Mainly Beta", "Alpha-Beta", "All"]
 pdb_by_class_df = pd.read_csv("af2/af2_set_classes.csv")
@@ -99,8 +104,6 @@ for c in range(1,5):
     data_rmsd = []
     data_recall = []
     data_accuracy = []
-    sequences = []
-
     median = 0
     for i, model_name in enumerate(models):
         df = pd.read_csv(f"results_{model_name}.csv")
@@ -108,7 +111,6 @@ for c in range(1,5):
         x = df.recall.to_numpy() * 100
         z = df.accuracy.to_numpy() * 100
         y_nan = df.rmsd.to_numpy()
-
         # Remove NaN
         y = y_nan[~np.isnan(y_nan)]
         x = x[~np.isnan(y_nan)]
@@ -118,47 +120,54 @@ for c in range(1,5):
         y = y[current_map]
         x = x[current_map]
         z = z[current_map]
-        seqs = df.sequence.to_numpy()
-        seqs = np.array([len(seq) for seq in seqs])
-        sequences = seqs[~np.isnan(y_nan)]
-
-        sequences = sequences[current_map]
-        assert len(sequences) == len(y)
-
+        # print(x)
         # raise ValueError
         # except:
         #     pass
-        print(f"There are {len(x)} structures for class {c} - {class_names[c-1]}")
-        if RMSD_100 == True:
-            rmsd_100 = []
-            for curr_rsmd, curr_len in zip(y, sequences):
-                rmsd_100.append(curr_rsmd / (1 + np.log(curr_len/100)))
-            data_rmsd.append(np.array(rmsd_100))
-        else:
-            data_rmsd.append(y)
+        # print(f"There are {len(x)} structures for class {c} - {class_names[c-1]}")
+        print(f"{model_name} has {len(y[y < 2])} for class {class_names[c-1]}")
+
+        data_rmsd.append(y)
         data_recall.append(x)
         data_accuracy.append(x)
         if model_name == "evoEF2":
             median = np.median(y)
 
-    SHOW_OUTLIERS = False
-    # Do boxplots
-    sns.boxplot(data=data_rmsd, ax = axes[c-1], showfliers = SHOW_OUTLIERS)
+        cumulative_rmsd = []
+        thresholds = np.arange(0, 10, 2)
+
+        for idx, t in enumerate(thresholds):
+
+            if idx == 0:
+                percentage = ((len(y[y < t])) / len(y))
+            else:
+                percentage = ((len(y[y < t])-cumulative_rmsd[-1]) / len(y))
+            cumulative_rmsd.append(percentage)
+        if model_name == "default_unbalanced":
+            axes[c-1].plot(thresholds, cumulative_rmsd, label=models_better_names[i], linewidth=5)
+        else:
+            axes[c-1].plot(thresholds, cumulative_rmsd, label=models_better_names[i], linewidth=5)
+
     # xtickNames = plt.setp(axes[c-1], xticklabels=models)
     # plt.setp(xtickNames, rotation=90, fontsize=5)
     axes[c-1].set_title(f'{class_names[c-1]}') #, fontsize=20)
-    if RMSD_100:
-        ax.set_ylabel('RMSD$_{100}$ ($\AA$)')  # , fontsize=20)
-    else:
-        ax.set_ylabel('RMSD ($\AA$)') #, fontsize=20)
-    axes[c-1].tick_params(axis='x') #, labelsize=18)
+    # ax.set_xlabel('RMSD ($\AA$)') #, fontsize=20)
+    axes[0].set_ylabel('% Structures (%)') #, fontsize=20)
+    # axes[0].set_ylabel('Density') #, fontsize=20)
+    # axes[c-1].tick_params(axis='x') #, labelsize=18)
     axes[c-1].tick_params(axis='y', labelsize=13)
     axes[c-1].yaxis.set_major_locator(plt.MaxNLocator(3))
+    axes[c-1].xaxis.set_major_locator(plt.MaxNLocator(3))
+    # axes[c-1].axvline(2, color='k', linestyle='dashed', linewidth=1)
+    # axes[c-1].text(50 * 0.9, 2.2, '2 ($\AA$)', fontsize=18)
+    # axes[c-1].yaxis.set_major_locator(plt.MaxNLocator(3))
 
     # axes[c-1].set_xticklabels(tick_labels.astype(int))
-    axes[c-1].axes.xaxis.set_visible(False)
-
-    axes[c-1].set_ylim(ymin=0, ymax=median+1) #, ymax=np.max(data_rmsd))
+    # axes[c-1].axes.xaxis.set_visible(False)
+    # axes[c-1].set_yticklabels([])
+    # axes[c-1].set_xticklabels([])
+    axes[c-1].set_ylim(ymin=0) #, ymax=np.max(data_rmsd))
+    axes[c-1].set_xlim(xmin=0, xmax=6) #, ymax=np.max(data_rmsd))
 
     #
     # sns.boxplot(data=data_recall, ax = ax2, showfliers = SHOW_OUTLIERS)
@@ -181,6 +190,23 @@ for c in range(1,5):
 
 
     del data_rmsd; del data_accuracy; del data_recall
+fig.text(0.5, 0.01, 'RMSD ($\AA$)', ha='center')
+# plt.legend()
+legend = plt.legend(ncol = 4, framealpha=1, frameon=False, bbox_to_anchor=(0.5, -0.15))
+
+
+def export_legend(legend, filename="1jjiflegend_smal.eps", expand=[-5,-5,5,5]):
+    fig  = legend.figure
+    fig.canvas.draw()
+    bbox  = legend.get_window_extent()
+    bbox = bbox.from_extents(*(bbox.extents + np.array(expand)))
+    bbox = bbox.transformed(fig.dpi_scale_trans.inverted())
+    fig.savefig(filename, dpi=300, bbox_inches=bbox)
+
+export_legend(legend)
+# plt.legend([],[], frameon=False)
+#
+# fig.text(0.04, 0.5, 'Density', va='center', rotation='vertical')
 plt.tight_layout()
-plt.savefig(f"boxplot_RMSD_Norm_{RMSD_100}.eps", dpi=300)
+# plt.savefig(f"hist_RMSD.eps", dpi=300)
 plt.close()
